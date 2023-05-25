@@ -4,19 +4,32 @@ const abletonParser = require('als-parser');
 const app = express();
 const port = 3000;
 
-abletonParser.parseFile('../2canales-midi-audio-sinclips.als').then((res) => {
-    
-    const arrayTracks = res.getTracks();
-    
-    //cicle through arraytracks and get the name of each track
-    arrayTracks[0].AudioTrack.forEach(element => {
-        console.log(element.Name[0].EffectiveName[0].$.Value);
+app.get('/audio-tracks', (req, res) => {
+  abletonParser.parseFile('../2canales-midi-audio-sinclips.als')
+    .then((alsData) => {
+      const audioTracks = alsData.getTracks()[0].AudioTrack;
+      const trackNames = audioTracks.map((track) => track.Name[0].EffectiveName[0].$.Value);
+      res.json(trackNames);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error parsing ALS file');
     });
+});
 
-    arrayTracks[0].MidiTrack.forEach(element => {
-        console.log(element.Name[0].EffectiveName[0].$.Value);
+app.get('/midi-tracks', (req, res) => {
+  abletonParser.parseFile('../2canales-midi-audio-sinclips.als')
+    .then((alsData) => {
+      const midiTracks = alsData.getTracks()[0].MidiTrack;
+      const trackNames = midiTracks.map((track) => track.Name[0].EffectiveName[0].$.Value);
+      res.json(trackNames);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error parsing ALS file');
     });
-    
-    // this returns an object with value '$' and the attribute is another object with value '6-Audio'
+});
 
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
