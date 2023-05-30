@@ -1,11 +1,13 @@
 const express = require('express');
 const abletonParser = require('als-parser');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
+app.use(cors());
 
 app.get('/audio-tracks', (req, res) => {
-  abletonParser.parseFile('../2canales-midi-audio-sinclips.als')
+  abletonParser.parseFile('../abnormal-loop.als')
     .then((alsData) => {
       const audioTracks = alsData.getTracks()[0].AudioTrack;
       const trackNames = audioTracks.map((track) => track.Name[0].EffectiveName[0].$.Value);
@@ -18,7 +20,7 @@ app.get('/audio-tracks', (req, res) => {
 });
 
 app.get('/midi-tracks', (req, res) => {
-  abletonParser.parseFile('../2canales-midi-audio-sinclips.als')
+  abletonParser.parseFile('../abnormal-loop.als')
     .then((alsData) => {
       const midiTracks = alsData.getTracks()[0].MidiTrack;
       const trackNames = midiTracks.map((track) => track.Name[0].EffectiveName[0].$.Value);
